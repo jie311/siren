@@ -48,8 +48,6 @@ class Siren(object):
 
 
         self.harm_cls = HarmClassifier()
-        # self.harm_flag_results_kw = []
-        # self.harm_flag_results_gpt = []
 
 
         self.interaction_dir=f"interactions_sft_dpo_attacker_{attacker_model}_adaptor_{adaptor}_victim_{victim_model}"
@@ -114,20 +112,12 @@ class Siren(object):
                     turn_4_victim_response = self.get_victim_response(turn_4_attack_query)
                     self.messages.append({"role": "assistant", "content": turn_4_victim_response})
 
-                #     self.harm_flag_results_kw.append({"index": i, "harmful_flag_kw": self.harm_cls.classify_with_kw(turn_4_victim_response)})
-                #     self.harm_flag_results_gpt.append({"index": i, "harmful_flag_gpt": self.harm_cls.classify_with_llm_judge(turn_4_victim_response)})
-                # else:
-                #     self.harm_flag_results_kw.append({"index": i, "harmful_flag_kw": self.harm_cls.classify_with_kw(turn_3_victim_response)})
-                #     self.harm_flag_results_gpt.append({"index": i, "harmful_flag_gpt": self.harm_cls.classify_with_llm_judge(turn_3_victim_response)})
                 self.save_interactions_i(i,q)
                 logging.info(f"----Saved Interactions: Idx: {i}, Question: {q}-----")
             except:
                 print(f"Error when dealing with {i}")
                 continue
-        # asr_rate_kw=self.cal_asr_rate_kw()
-        # logging.info(f"----ASR Rate KW: {asr_rate_kw}-----")
-        # asr_rate_gpt=self.cal_asr_rate_gpt()
-        # logging.info(f"----ASR Rate GPT: {asr_rate_gpt}-----")
+
     def save_interactions_i(self, idx, question):
         filename=f"{idx}.json"
         interactions_i=[{"Index": idx, "Goal": question, "Interactions":self.messages}]
@@ -135,19 +125,7 @@ class Siren(object):
             json.dump(interactions_i, f, ensure_ascii=False, indent=4)
         print(f"Results saved to {filename}")
 
-    # def cal_asr_rate_kw(self):
-    #     total_attempts = len(self.harm_flag_results_kw)
-    #     successful_attacks = sum(1 for result in self.harm_flag_results_kw if result["harmful_flag_kw"])
-    #     asr_rate = (successful_attacks / total_attempts) * 100 if total_attempts > 0 else 0
-    #     print(f"Attack Success Rate (ASR) [Key Words]: {asr_rate:.2f}%")
-    #     return asr_rate
-    #
-    # def cal_asr_rate_gpt(self):
-    #     total_attempts = len(self.harm_flag_results_gpt)
-    #     successful_attacks = sum(1 for result in self.harm_flag_results_gpt if result["harmful_flag_gpt"])
-    #     asr_rate= (successful_attacks / total_attempts) * 100 if total_attempts > 0 else 0
-    #     print(f"Attack Success Rate (ASR) [GPT]: {asr_rate:.2f}%")
-    #     return asr_rate
+
 
 
 
@@ -167,6 +145,8 @@ if __name__ == "__main__":
     benchmark_file = args.benchmark_file
     df = pd.read_csv(benchmark_file)
     questions = df['goal'].to_list()
+    # for remote llms
+    # questions=questions[:50]
 
     # init
     attacker_model = args.attacker_model

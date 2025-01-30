@@ -15,9 +15,6 @@ class LLMRequester (object):
         self.claude_api_key_list = self.claude_api_keys.split(',')
         self.claude_base_url = os.environ.get("ANTHROPIC_BASE_URL")
 
-        self.qwen_api_key=os.environ.get("QWEN_API_KEY")
-        self.qwen_base_url = os.environ.get("QWEN_BASE_URL")
-
         self.gemini_api_keys=os.environ.get("GEMINI_API_KEYS")
         self.gemini_api_key_list = self.gemini_api_keys.split(',')
         self.gemini_base_url = os.environ.get("GEMINI_BASE_URL")
@@ -29,8 +26,6 @@ class LLMRequester (object):
             return self.request_gpt(messages)
         elif "claude" in self.model:
             return self.request_claude(messages)
-        elif "qwen" in self.model:
-            return self.request_qwen(messages)
         else:
             return self.request_gemini(messages)
 
@@ -47,15 +42,6 @@ class LLMRequester (object):
         headers = {'Accept': 'application/json', 'Authorization': f'Bearer {api_key}',
                    'User-Agent': 'Apifox/1.0.0 (https://apifox.com)', 'Content-Type': 'application/json'}
         payload = json.dumps({"model": self.model, "messages": messages})
-        response_tmp = requests.request("POST", url, headers=headers, data=payload)
-        response = response_tmp.json()
-        return response['choices'][0]['message']['content']
-
-    def request_qwen(self, messages):
-        api_key = self.qwen_api_key
-        url = self.qwen_base_url
-        payload = json.dumps({"model": self.model,"messages": messages})
-        headers = {'Content-Type': 'application/json','Authorization': f'Bearer {api_key}'}
         response_tmp = requests.request("POST", url, headers=headers, data=payload)
         response = response_tmp.json()
         return response['choices'][0]['message']['content']

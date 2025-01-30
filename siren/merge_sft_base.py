@@ -24,9 +24,10 @@ def load_and_save_model_adapter(base_model, adaptor):
     print("CUDA cache cleared.")
 
 if __name__=="__main__":
-    base_model_dict = {"llama3": "meta-llama/Meta-Llama-3-8B-Instruct",
+    base_model_dict = {"llama3": "Your-Downloaded-from-meta-llama/Meta-Llama-3-8B-Instruct",
                        "mistral": "mistralai/Mistral-7B-Instruct-v0.3",
                        "qwen": "Qwen/Qwen2.5-7B-Instruct"}
+
     sft_adaptor_path_dict = {
         "llama3": {"decop_1": "Yiyiyi/sft_llama3_decop_1",
                    "decop_2": "Yiyiyi/sft_llama3_decop_2",
@@ -50,9 +51,15 @@ if __name__=="__main__":
                  "decop_2": "Your-Merged-Model-Path/sft_qwen/decop_2",
                  "combined": "Your-Merged-Model-Path/sft_qwen/combined"},
     }
+    #please first make sure the merge_dirs exist
 
     device = "cuda"
+    # if you only want to merge one model
+    # base_model='mistral'
+    # adaptor='combined'
+    # load_and_save_model_adapter(base_model, adaptor)
 
-    for base_model in ['llama3','mistral','qwen']:
-        for adaptor in ['decop_1', 'decop_2','combined']:
-            load_and_save_model_adapter(base_model, adaptor)
+    # merge all models
+    # for base_model in ['mistral','qwen','llama3']:
+    #     for adaptor in ['decop_1', 'decop_2','combined']:
+    #         load_and_save_model_adapter(base_model, adaptor)

@@ -12,3 +12,6 @@ CUDA_VISIBLE_DEVICES=1 python main_sft_dpo.py --attacker_model mistral --adaptor
 CUDA_VISIBLE_DEVICES=4 python main_sft_dpo.py --attacker_model llama3 --adaptor combined --victim_model gemini-1.5-pro-latest  > sft_dpo_llama3_com_ge.log 2>&1 &
 
 
+#attacker_model:  ['llama3', 'mistral', 'qwen']
+#adaptor: ['decop_1', 'decop_2', 'combined']
+#victim_model: ['claude-3-5-haiku-20241022', 'gpt-4o-2024-08-06', 'gemini-1.5-pro-latest']

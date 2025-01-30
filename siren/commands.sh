@@ -13,3 +13,6 @@ CUDA_VISIBLE_DEVICES=1,2 python main_sft_dpo.py --attacker_model qwen --adaptor 
 
 
 
+#attacker_model:  ['llama3', 'mistral', 'qwen']
+#adaptor: ['decop_1', 'decop_2', 'combined']
+#victim_model: ['llama3', 'mistral', 'qwen']
