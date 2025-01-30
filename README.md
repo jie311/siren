@@ -5,7 +5,7 @@ This repository contains the resources for reproducing the experiments described
 
 ### `train`
 The `train` directory contains:
-- A curated set of data samples.
+- Randomly selected subset of data samples.
 - Configuration `.yaml` files for SFT (Supervised Fine-Tuning) and DPO (Direct Preference Optimization) training, prepared using the [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory).
 
 ### `data`
@@ -18,47 +18,61 @@ The `siren` directory contains the code for reproducing our experiments.
 
 ---
 
-## Usage
-
+## Installation and Usage
 To use Siren, follow these steps:
+- You might need to **download LLaMA-3-8B into a local directory first** according to the instructions of [meta-llama/Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct). 
 
+```bash
+git clone https://github.com/YiyiyiZhao/siren.git
+cd siren
+pip install -r requirements.txt
+```
+
+### Pre-Processing
+Adaptors with names like `sft_llama3_decop_1` indicate the first stage of post-training (only SFT).
+Therefore, you need to **first merge the SFT adaptors with the public LLMs (e.g., LLaMA-3)**.
+The DPO post-training stage is applied to the merged models.
+
+```bash
+cd siren
+```
+- Make sure to modify lines 42 to 52 in the `merge_sft_base.py` script, replacing the placeholder paths with **the actual paths where you want to save the merged model (SFT with Base)**.
+- Make sure to modify line 27 in the `merge_sft_base.py` script, replacing the placeholder paths with **the actual path where [meta-llama/Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) downloaded**.
+
+```bash
+python merge_sft_dpo.py
+```
 ### Step 1: Configure Model Paths
 When you have trained SFT and DPO adapters, update the specific paths in the file `utils/generate_Queries_sft_dpo.py`, lines 11 to 30:
 
 ```python
 self.base_model_dict = {
-    "llama3": {
-        "decop_1": "path-to-/sft_llama3/decop_1",
-        "decop_2": "path-to-/sft_llama3/decop_2",
-        "combined": "path-to-/sft_llama3/combined"
-    },
-    "mistral": {
-        "decop_1": "path-to-/sft_mistral/decop_1",
-        "decop_2": "path-to-/sft_mistral/decop_2",
-        "combined": "path-to-/sft_mistral/combined"
-    },
-    "qwen": {
-        "decop_1": "path-to-/sft_qwen/decop_1",
-        "decop_2": "path-to-/sft_qwen/decop_2",
-        "combined": "path-to-/sft_qwen/combined"
-    }
+    "llama3": {"decop_1": "Your-Merged-Model-Path/sft_llama3/decop_1",
+               "decop_2": "Your-Merged-Model-Path/sft_llama3/decop_2",
+               "combined": "Your-Merged-Model-Path/sft_llama3/combined"},
+    "mistral": {"decop_1": "Your-Merged-Model-Path/sft_mistral/decop_1",
+                "decop_2": "Your-Merged-Model-Path/sft_mistral/decop_2",
+                "combined": "Your-Merged-Model-Path/sft_mistral/combined"},
+    "qwen": {"decop_1": "Your-Merged-Model-Path/sft_qwen/decop_1",
+             "decop_2": "Your-Merged-Model-Path/sft_qwen/decop_2",
+             "combined": "Your-Merged-Model-Path/sft_qwen/combined"},
 }
 
 self.adaptor_path_dict = {
     "llama3": {
-        "decop_1": "path-to-/LLaMA-Factory/saves/llama3_sft_dpo/train_decop_1",
-        "decop_2": "path-to-/LLaMA-Factory/saves/llama3_sft_dpo/train_decop_2",
-        "combined": "path-to-/LLaMA-Factory/saves/llama3_sft_dpo/train_combined"
+        "decop_1": "Yiyiyi/sft_dpo_llama3_decop_1",
+        "decop_2": "Yiyiyi/sft_dpo_llama3_decop_1",
+        "combined": "Yiyiyi/sft_dpo_llama3_decop_1"
     },
     "mistral": {
-        "decop_1": "path-to-/LLaMA-Factory/saves/mistral_sft_dpo/train_decop_1",
-        "decop_2": "path-to-/LLaMA-Factory/saves/mistral_sft_dpo/train_decop_2",
-        "combined": "path-to-/LLaMA-Factory/saves/mistral_sft_dpo/train_combined"
+        "decop_1": "Yiyiyi/sft_dpo_llama3_decop_1",
+        "decop_2": "Yiyiyi/sft_dpo_llama3_decop_1",
+        "combined": "Yiyiyi/sft_dpo_llama3_decop_1"
     },
     "qwen": {
-        "decop_1": "path-to-/LLaMA-Factory/saves/qwen_sft_dpo/train_decop_1",
-        "decop_2": "path-to-/LLaMA-Factory/saves/qwen_sft_dpo/train_decop_2",
-        "combined": "path-to-/LLaMA-Factory/saves/qwen_sft_dpo/train_combined"
+        "decop_1": "Yiyiyi/sft_dpo_llama3_decop_1",
+        "decop_2": "Yiyiyi/sft_dpo_llama3_decop_1",
+        "combined": "Yiyiyi/sft_dpo_llama3_decop_1"
     }
 }
 ```
@@ -75,14 +89,11 @@ self.claude_api_keys = os.environ.get("ANTHROPIC_API_KEYS")
 self.claude_api_key_list = self.claude_api_keys.split(',')
 self.claude_base_url = os.environ.get("ANTHROPIC_BASE_URL")
 
-self.qwen_api_key = os.environ.get("QWEN_API_KEY")
-self.qwen_base_url = os.environ.get("QWEN_BASE_URL")
-
 self.gemini_api_keys = os.environ.get("GEMINI_API_KEYS")
 self.gemini_api_key_list = self.gemini_api_keys.split(',')
 self.gemini_base_url = os.environ.get("GEMINI_BASE_URL")
 ```
-
+During our experiments, each remote LLM has more than one API key. You can modify this part to fit your settings in the `utils/remote_llm_response.py` file. 
 ---
 
 ## Commands
