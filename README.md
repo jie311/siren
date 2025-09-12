@@ -80,7 +80,7 @@ self.adaptor_path_dict = {
 ***You can manually download the adapters [here](https://huggingface.co/Yiyiyi/models).  
 If you keep the `self.adaptor_path_dict` the same as shown, it will download the adapters automatically.***
 
-![Adapters](trained_adapters.png)
+![Adapters](model_adapters.png)
 
 ### Step 2: Configure API Keys
 Set the API keys for querying external LLMs in `utils/remote_llm_response.py`, lines 10 to 22:
